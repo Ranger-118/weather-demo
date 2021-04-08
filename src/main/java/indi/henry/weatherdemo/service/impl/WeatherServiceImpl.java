@@ -1,5 +1,6 @@
 package indi.henry.weatherdemo.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,12 @@ public class WeatherServiceImpl implements WeatherService {
     private WeatherRepository weatherRepository;
 
     @Override
+    public List<Weather> getWeatherAllInfo() {
+        List<Weather> result = weatherRepository.findAll();
+        return result;
+    }
+
+    @Override
     public Weather getWeatherInfo(String city) {
         Optional<Weather> result = weatherRepository.findById(city);
         result.orElseThrow(() -> new AppException("Cannot find the city"));
@@ -25,12 +32,12 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Boolean addWeatherCity(String city) {
+    public Weather addWeatherCity(String city) {
         Weather item = weatherRepository.findById(city).orElseGet(null);;
         if (!ObjectUtils.isEmpty(item)) {
             item.setValid(true);
-            return true;
-        } else return false;
+            return weatherRepository.saveAndFlush(item);
+        } else return null;
     }
 
     @Override

@@ -1,9 +1,7 @@
 package indi.henry.weatherdemo.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 
 import lombok.Data;
 

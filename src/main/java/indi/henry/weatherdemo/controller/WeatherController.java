@@ -1,5 +1,7 @@
 package indi.henry.weatherdemo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,28 +23,34 @@ public class WeatherController {
 
     @Autowired
     private WeatherService weatherService;
-    
+
     @GetMapping
+    public ResponseEntity<List<Weather>> get() {
+        List<Weather> result = weatherService.getWeatherAllInfo();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+    @GetMapping("/{city}")
     public ResponseEntity<Weather> get(@PathVariable String city) {
         Weather result = weatherService.getWeatherInfo(city);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> post(@RequestBody String city) {
-        Boolean result = weatherService.addWeatherCity(city);
+    public ResponseEntity<Weather> post(@RequestBody String city) {
+        Weather result = weatherService.addWeatherCity(city);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<Weather> put(@RequestBody Weather modifiedItem) {
-
-        return null;
+        Weather result = weatherService.modifyWeatherInfo(modifiedItem);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<Weather> put(@PathVariable String city) {
-
-        return null;
+    public ResponseEntity<Boolean> delete(@PathVariable String city) {
+        Boolean result = weatherService.deleteWeatherCity(city);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
