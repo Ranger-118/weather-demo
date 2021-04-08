@@ -1,12 +1,14 @@
 package indi.henry.weatherdemo.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import lombok.Data;
 
 @Data
-@Entity
+@Entity(name = "APP_WEATHER")
 public class Weather {
     
     @Id
@@ -20,5 +22,5 @@ public class Weather {
 
     private String wind;
 
-    private Boolean enabled;
+    private Boolean valid;
 }

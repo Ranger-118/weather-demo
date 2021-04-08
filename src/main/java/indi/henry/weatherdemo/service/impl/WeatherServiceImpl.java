@@ -28,7 +28,7 @@ public class WeatherServiceImpl implements WeatherService {
     public Boolean addWeatherCity(String city) {
         Weather item = weatherRepository.findById(city).orElseGet(null);;
         if (!ObjectUtils.isEmpty(item)) {
-            item.setEnabled(true);
+            item.setValid(true);
             return true;
         } else return false;
     }

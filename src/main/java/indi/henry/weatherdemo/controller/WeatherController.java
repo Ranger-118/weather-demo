@@ -29,9 +29,9 @@ public class WeatherController {
     }
 
     @PostMapping
-    public ResponseEntity<Weather> post(@RequestBody String city) {
-        
-        return null;
+    public ResponseEntity<Boolean> post(@RequestBody String city) {
+        Boolean result = weatherService.addWeatherCity(city);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping
