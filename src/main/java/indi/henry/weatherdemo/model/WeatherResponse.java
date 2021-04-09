@@ -1,15 +1,17 @@
-package indi.henry.weatherdemo.entity;
+package indi.henry.weatherdemo.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
+import lombok.Builder;
 import lombok.Data;
 
+/**
+ * Weather information for the http response
+ * 
+ * @author Henry Hu
+ */
 @Data
-@Entity
-public class Weather {
+@Builder
+public class WeatherResponse {
     
-    @Id
     private String city;
 
     private String updatedTime;
@@ -20,5 +22,4 @@ public class Weather {
 
     private String wind;
 
-    private Boolean enabled;
 }

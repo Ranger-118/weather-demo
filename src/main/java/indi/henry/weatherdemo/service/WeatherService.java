@@ -1,14 +1,22 @@
 package indi.henry.weatherdemo.service;
 
-import indi.henry.weatherdemo.entity.Weather;
+import java.util.List;
 
+import indi.henry.weatherdemo.entity.CityEntity;
+import indi.henry.weatherdemo.model.WeatherResponse;
+
+/**
+ * Service interface specified for weather API
+ * 
+ * @author Henry Hu
+ */
 public interface WeatherService {
+
+    public List<CityEntity> getWeatherAllInfo();
     
-    public Weather getWeatherInfo(String city);
+    public WeatherResponse getWeatherInfo(String city) throws RuntimeException;
 
-    public Boolean addWeatherCity(String city);
+    public WeatherResponse addWeatherCity(String city) throws RuntimeException;
 
-    public Weather modifyWeatherInfo(Weather info);
-
-    public Boolean deleteWeatherCity(String city);
+    public void deleteWeatherCity(String city);
 }

@@ -1,9 +1,11 @@
 package indi.henry.weatherdemo.exception;
 
-public class AppException extends RuntimeException {
+public class AppException extends Exception {
 
     /**
-     *
+     * Application owned exception
+     * 
+     * @author Henry Hu
      */
     private static final long serialVersionUID = 1L;
 

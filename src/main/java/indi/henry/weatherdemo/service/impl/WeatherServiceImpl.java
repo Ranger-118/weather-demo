@@ -1,47 +1,104 @@
 package indi.henry.weatherdemo.service.impl;
 
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import indi.henry.weatherdemo.entity.Weather;
-import indi.henry.weatherdemo.exception.AppException;
+import indi.henry.weatherdemo.entity.CityEntity;
+import indi.henry.weatherdemo.model.WeatherResponse;
+import indi.henry.weatherdemo.model.WeatherResult;
 import indi.henry.weatherdemo.repository.WeatherRepository;
 import indi.henry.weatherdemo.service.WeatherService;
+import indi.henry.weatherdemo.util.AppConstants;
 
+/**
+ * The implementation for the weather services
+ * 
+ * @author Henry Hu
+ */
 @Service
+@Transactional
 public class WeatherServiceImpl implements WeatherService {
 
-    @Autowired
+    @Value("${weather-url}")
+    private String weatherUrl;
+
+    @Value("${weather-api-key}")
+    private String apiKey;
+
     private WeatherRepository weatherRepository;
 
-    @Override
-    public Weather getWeatherInfo(String city) {
-        Optional<Weather> result = weatherRepository.findById(city);
-        result.orElseThrow(() -> new AppException("Cannot find the city"));
-        return result.get();
+    private RestTemplate restTemplate;
+
+    @Autowired
+    public WeatherServiceImpl(WeatherRepository weatherRepository, RestTemplate restTemplate) {
+        this.weatherRepository = weatherRepository;
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public Boolean addWeatherCity(String city) {
-        Weather item = weatherRepository.findById(city).orElseGet(null);;
-        if (!ObjectUtils.isEmpty(item)) {
-            item.setEnabled(true);
-            return true;
-        } else return false;
+    public List<CityEntity> getWeatherAllInfo() {
+        List<CityEntity> result = weatherRepository.findAll();
+        return result;
+    }
+
+    /**
+     * The method would call the weather public API for current weather information for target city by using Rest Template,
+     * and abstract the requested fields to construct the weather response structure for output
+     * 
+     * @author Henry Hu
+     */
+    @Override
+    public WeatherResponse getWeatherInfo(String city) throws RuntimeException {
+
+        Map<String, String> params = new HashMap<>();
+        params.put(AppConstants.CITY_PARAM, city);
+        params.put(AppConstants.API_KEY_PARAM, apiKey);
+
+        WeatherResult weatherResult = restTemplate.getForObject(weatherUrl, WeatherResult.class, params);
+
+        String temperature = weatherResult.getMain().getTemp().min(BigDecimal.valueOf(32))
+                .divide(BigDecimal.valueOf(1.8), 0).toString().concat(AppConstants.CENTIGRADE_SYMBOL);
+        String updatedTime = new SimpleDateFormat(AppConstants.DATE_FORMAT)
+                .format(Date.from(Instant.ofEpochSecond(weatherResult.getDt())));
+        String weather = weatherResult.getWeather().get(0).getDescription();
+        String wind = weatherResult.getWind().getSpeed().toString().concat(AppConstants.SPEED_UNIT);
+
+        return WeatherResponse.builder()
+                    .city(city)
+                    .temperature(temperature)
+                    .updatedTime(updatedTime)
+                    .weather(weather)
+                    .wind(wind)
+                    .build();
+    }
+
+    /**
+     * The method would call the weather public API for city verification,
+     * if no issue it would add the city to the database
+     * 
+     * @author Henry Hu
+     */
+    @Override
+    public WeatherResponse addWeatherCity(String city) throws RuntimeException {
+        WeatherResponse result = this.getWeatherInfo(city);
+        CityEntity item = new CityEntity(result.getCity());
+        item = weatherRepository.saveAndFlush(item);
+        return result;
     }
 
     @Override
-    public Weather modifyWeatherInfo(Weather info) {
-        return weatherRepository.saveAndFlush(info);
-    }
-
-    @Override
-    public Boolean deleteWeatherCity(String city) {
+    public void deleteWeatherCity(String city) throws RuntimeException {
         weatherRepository.deleteById(city);
-        return true;
     }
-    
 }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Weather Demo</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <table>
+        <tbody>
+            <tr>
+                <td>City</td>
+                <td id="city"></td>
+            </tr>
+            <tr>
+                <td>Updated Time</td>
+                <td id="updatedTime"></td>
+            </tr>
+            <tr>
+                <td>Weather</td>
+                <td id="weather"></td>
+            </tr>
+            <tr>
+                <td>Temperature</td>
+                <td id="temperature"></td>
+            </tr>
+            <tr>
+                <td>Wind</td>
+                <td id="wind"></td>
+            </tr>
+        </tbody>
+    </table>
+    <select onchange="select(this)" name="cityList" id="cityList">
+    </select>
+    <input type="text" id="inputCity">
+    <button onclick="add()">Add</button>
+    <button onclick="remove()">Remove</button>
+</body>
+
+</html>
+<script type="text/javascript">
+    /**
+     * The page would first load the city list from backend once the page is ready
+     * 
+     * */
+    $().ready(() => {
+        $.getJSON("http://localhost:8080/weather", res => {
+            $('#cityList').append("<option></option>");
+            res.forEach(element => {
+                $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
+            });
+        });
+    });
+
+    function add() {
+        if (!$('#inputCity').val()) return;
+        $.ajax({
+            url: "http://localhost:8080/weather",
+            data: $('#inputCity').val(),
+            type: "post",
+            contentType: "application/json;charset=UTF-8"
+        }).done(res => {
+            $.getJSON("http://localhost:8080/weather", result => {
+                data = result;
+                $('#city').text(res.city);
+                $('#updatedTime').text(res.updatedTime);
+                $('#weather').text(res.weather);
+                $('#temperature').text(res.temperature);
+                $('#wind').text(res.wind);
+
+                $('#inputCity').val('');
+                document.getElementById('cityList').innerHTML = '';
+
+                $('#cityList').append("<option></option>");
+                result.forEach(element => {
+                    $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
+                });
+                $('#cityList').val(res.city);
+            });
+        });
+    }
+
+    function select(params) {
+        if (!params.value) return;
+        $.getJSON("http://localhost:8080/weather/" + params.value, res => {
+            if (res) {
+                $('#city').text(res.city);
+                $('#updatedTime').text(res.updatedTime);
+                $('#weather').text(res.weather);
+                $('#temperature').text(res.temperature);
+                $('#wind').text(res.wind);
+            } else {
+                $('#city').text('');
+                $('#updatedTime').text('');
+                $('#weather').text('');
+                $('#temperature').text('');
+                $('#wind').text('');
+            }
+        });
+    }
+
+    function remove() {
+        $.ajax({
+            url: "http://localhost:8080/weather/" + $('#cityList').val(),
+            data: null,
+            type: "delete",
+            contentType: "application/json;charset=UTF-8"
+        }).done(res => {
+            $.getJSON("http://localhost:8080/weather", res => {
+                data = res;
+                document.getElementById('cityList').innerHTML = '';
+                $('#cityList').append("<option></option>");
+                res.forEach(element => {
+                    $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
+                });
+                $('#city').text('');
+                $('#updatedTime').text('');
+                $('#weather').text('');
+                $('#temperature').text('');
+                $('#wind').text('');
+            });
+        });
+    }
+</script>

@@ -1,0 +1,13 @@
+td {
+    width: 200px;
+    border: 1px black solid;
+}
+
+table {
+    margin-bottom: 50px;
+}
+
+select {
+    width: 200px;
+}
+
