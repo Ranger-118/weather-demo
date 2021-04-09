@@ -1,4 +1,4 @@
-<div align="center">
+<div>
   <br>
   <p>
     <b>City Current Weather Viewer Demo</b>
