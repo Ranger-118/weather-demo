@@ -2,17 +2,16 @@ package indi.henry.weatherdemo.service;
 
 import java.util.List;
 
-import indi.henry.weatherdemo.entity.Weather;
+import indi.henry.weatherdemo.entity.CityEntity;
+import indi.henry.weatherdemo.entity.WeatherResponse;
 
 public interface WeatherService {
 
-    public List<Weather> getWeatherAllInfo();
+    public List<CityEntity> getWeatherAllInfo();
     
-    public Weather getWeatherInfo(String city);
+    public WeatherResponse getWeatherInfo(String city) throws RuntimeException;
 
-    public Weather addWeatherCity(String city);
+    public WeatherResponse addWeatherCity(String city) throws RuntimeException;
 
-    public Weather modifyWeatherInfo(Weather info);
-
-    public Boolean deleteWeatherCity(String city);
+    public void deleteWeatherCity(String city);
 }

@@ -9,9 +9,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExceptionHandlers {
-    
-    @ExceptionHandler(value = AppException.class)
-    public ResponseEntity<String> handleAuthorizeException(AppException e, HttpServletRequest request) {
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<String> handleException(Exception e, HttpServletRequest request) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = RuntimeException.class)
+    public ResponseEntity<String> handleAppException(RuntimeException e, HttpServletRequest request) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
     }
 }

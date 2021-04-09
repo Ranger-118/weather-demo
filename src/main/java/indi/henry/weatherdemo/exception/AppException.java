@@ -1,6 +1,6 @@
 package indi.henry.weatherdemo.exception;
 
-public class AppException extends RuntimeException {
+public class AppException extends Exception {
 
     /**
      *

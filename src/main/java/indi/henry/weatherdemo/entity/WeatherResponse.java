@@ -1,15 +1,10 @@
 package indi.henry.weatherdemo.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
 import lombok.Data;
 
 @Data
-@Entity(name = "APP_WEATHER")
-public class Weather {
+public class WeatherResponse {
     
-    @Id
     private String city;
 
     private String updatedTime;
@@ -20,5 +15,4 @@ public class Weather {
 
     private String wind;
 
-    private Boolean valid;
 }

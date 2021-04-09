@@ -81,6 +81,8 @@ public class H2DatabaseConfig {
         return new JpaTransactionManager(entityManagerFactory().getObject());
     }
 
+
+    
     public List<String> getScriptsToExecute() {
         return scriptsToExecute;
     }

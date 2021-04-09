@@ -36,45 +36,88 @@
         </tbody>
     </table>
     <select onchange="select(this)" name="cityList" id="cityList">
-        <option></option>
     </select>
+    <input type="text" id="inputCity">
     <button onclick="add()">Add</button>
+    <button onclick="remove()">Remove</button>
 </body>
 
 </html>
 <script type="text/javascript">
-    let data;
-    let selected;
     $.getJSON("http://localhost:8080/weather", res => {
-        data = res;
+        $('#cityList').append("<option></option>");
         res.forEach(element => {
             $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
         });
     });
 
     function add() {
+        if (!$('#inputCity').val()) return;
         $.ajax({
             url: "http://localhost:8080/weather",
-            data: selected,
+            data: $('#inputCity').val(),
             type: "post",
             contentType: "application/json;charset=UTF-8"
         }).done(res => {
-            if (res) {
-                alert("Success!");
-            }
-        });
-    }
-
-    function select(params) {
-        selected = params.value;
-        $.getJSON("http://localhost:8080/weather/" + params.value, res => {
-            if (res.valid) {
+            $.getJSON("http://localhost:8080/weather", result => {
+                data = result;
                 $('#city').text(res.city);
                 $('#updatedTime').text(res.updatedTime);
                 $('#weather').text(res.weather);
                 $('#temperature').text(res.temperature);
                 $('#wind').text(res.wind);
+
+                $('#inputCity').val('');
+                document.getElementById('cityList').innerHTML = '';
+
+                $('#cityList').append("<option></option>");
+                result.forEach(element => {
+                    $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
+                });
+                $('#cityList').val(res.city);
+            });
+        });
+    }
+
+    function select(params) {
+        if (!params.value) return;
+        $.getJSON("http://localhost:8080/weather/" + params.value, res => {
+            if (res) {
+                $('#city').text(res.city);
+                $('#updatedTime').text(res.updatedTime);
+                $('#weather').text(res.weather);
+                $('#temperature').text(res.temperature);
+                $('#wind').text(res.wind);
+            } else {
+                $('#city').text('');
+                $('#updatedTime').text('');
+                $('#weather').text('');
+                $('#temperature').text('');
+                $('#wind').text('');
             }
+        });
+    }
+
+    function remove() {
+        $.ajax({
+            url: "http://localhost:8080/weather/" + $('#cityList').val(),
+            data: null,
+            type: "delete",
+            contentType: "application/json;charset=UTF-8"
+        }).done(res => {
+            $.getJSON("http://localhost:8080/weather", res => {
+                data = res;
+                document.getElementById('cityList').innerHTML = '';
+                $('#cityList').append("<option></option>");
+                res.forEach(element => {
+                    $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
+                });
+                $('#city').text('');
+                $('#updatedTime').text('');
+                $('#weather').text('');
+                $('#temperature').text('');
+                $('#wind').text('');
+            });
         });
     }
 </script>
