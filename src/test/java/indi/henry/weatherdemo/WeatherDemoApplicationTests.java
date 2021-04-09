@@ -26,6 +26,11 @@ import indi.henry.weatherdemo.entity.CityEntity;
 import indi.henry.weatherdemo.model.WeatherResponse;
 import indi.henry.weatherdemo.service.WeatherService;
 
+/**
+ * Test case for the application APIs
+ * 
+ * @author Henry Hu
+ */
 @AutoConfigureMockMvc
 @SpringBootTest
 @Transactional
@@ -61,54 +66,70 @@ class WeatherDemoApplicationTests {
 		this.objectMapper = objectMapper;
 	}
 
+	/**
+	 * Test getting the city list
+	 * @throws Exception
+	 */
 	@Test
 	void testGetAllCity_AllGet() throws Exception {
 
 		List<CityEntity> dbResult = weatherService.getWeatherAllInfo();
 
 		MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.get(DEFAULT_URI)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andReturn().getResponse();
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andReturn().getResponse();
 
 		List<CityEntity> resultList = objectMapper.readValue(response.getContentAsString(), new TypeReference<List<CityEntity>>() {});
 
 		assertEquals(dbResult, resultList);
 	}
 
+	/**
+	 * Test getting the specified city weather info
+	 * @throws Exception
+	 */
 	@Test
 	void testGetOne_Get() throws Exception {
 
 		WeatherResponse dbResult = weatherService.getWeatherInfo(SAMPLE_CITY);
 
 		MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.get(SAMPLE_CITY_URI)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andReturn().getResponse();
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andReturn().getResponse();
 
 		WeatherResponse result = objectMapper.readValue(response.getContentAsString(StandardCharsets.UTF_8), new TypeReference<WeatherResponse>() {});
 
 		assertEquals(dbResult, result);
 	}
 
+	/**
+	 * Test getting a not exist city, check the error if matches the design
+	 * @throws Exception
+	 */
 	@Test
 	void testGetNotExistOne_ExpectationFailed() throws Exception {
 
 		MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.get(CITY_NOT_EXIST_URI)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isExpectationFailed())
-		.andReturn().getResponse();
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().isExpectationFailed())
+			.andReturn().getResponse();
 
 		assertTrue(response.getContentAsString(StandardCharsets.UTF_8).contains(CITY_NOT_FOUND_ERROR_MESSAGE));
 	}
 
+	/**
+	 * Test adding a city that actually exist in the world
+	 * @throws Exception
+	 */
 	@Test
 	void testAddOneCity_GetTheAdded() throws Exception {
 
 		MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.post(DEFAULT_URI).contentType(MediaType.APPLICATION_JSON).content(NEW_ADDED_CITY)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andReturn().getResponse();
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andReturn().getResponse();
 
 		WeatherResponse dbResult = weatherService.getWeatherInfo(NEW_ADDED_CITY);
 
@@ -117,17 +138,25 @@ class WeatherDemoApplicationTests {
 		assertEquals(dbResult, result);
 	}
 
+	/**
+	 * Test adding a city not exist
+	 * @throws Exception
+	 */
 	@Test
 	void testAddOneCityNotExist_ExpectationFailed() throws Exception {
 
 		MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.post(DEFAULT_URI).contentType(MediaType.APPLICATION_JSON).content(CITY_NOT_EXIST)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isExpectationFailed())
-		.andReturn().getResponse();
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().isExpectationFailed())
+			.andReturn().getResponse();
 
 		assertTrue(response.getContentAsString(StandardCharsets.UTF_8).contains(CITY_NOT_FOUND_ERROR_MESSAGE));
 	}
 
+	/**
+	 * Test deleting the city stored in the database
+	 * @throws Exception
+	 */
 	@Test
 	void testDeleteOneCity_Success() throws Exception {
 
@@ -136,23 +165,26 @@ class WeatherDemoApplicationTests {
 		assertNotNull(newAdded);
 
 		MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.delete(SAMPLE_CITY_URI).contentType(MediaType.APPLICATION_JSON)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andReturn().getResponse();
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andReturn().getResponse();
 
 		Boolean result = objectMapper.readValue(response.getContentAsString(StandardCharsets.UTF_8), new TypeReference<Boolean>() {});
 
 		assertTrue(result);
 	}
 
-
+	/**
+	 * Test deleting a city not in the database
+	 * @throws Exception
+	 */
 	@Test
 	void testDeleteOneCity_ExpectationFailed() throws Exception {
 
 		MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders.delete(SAMPLE_CITY_URI).contentType(MediaType.APPLICATION_JSON)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isExpectationFailed())
-		.andReturn().getResponse();
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().isExpectationFailed())
+			.andReturn().getResponse();
 
 		assertEquals(response.getContentAsString(StandardCharsets.UTF_8), DELETE_CITY_NOT_EXIST_MESSAGE.concat(SAMPLE_CITY).concat(" exists!"));
 	}

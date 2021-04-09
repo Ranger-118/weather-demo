@@ -6,8 +6,6 @@ import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
 /**
  * This class provides the conversion between camelCase and SNAKE_CASE
- * 
- * @author Henry Hu
  */
 public class CustomPhysicalNamingStrategy implements PhysicalNamingStrategy {
 
