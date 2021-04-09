@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import indi.henry.weatherdemo.entity.CityEntity;
-import indi.henry.weatherdemo.entity.WeatherResponse;
+import indi.henry.weatherdemo.model.WeatherResponse;
 import indi.henry.weatherdemo.service.WeatherService;
 
 @AutoConfigureMockMvc

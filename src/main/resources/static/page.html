@@ -44,10 +44,16 @@
 
 </html>
 <script type="text/javascript">
-    $.getJSON("http://localhost:8080/weather", res => {
-        $('#cityList').append("<option></option>");
-        res.forEach(element => {
-            $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
+    /**
+     * The page would first load the city list from backend once the page is ready
+     * 
+     * */
+    $().ready(() => {
+        $.getJSON("http://localhost:8080/weather", res => {
+            $('#cityList').append("<option></option>");
+            res.forEach(element => {
+                $('#cityList').append("<option value='" + element.city + "'>" + element.city + "</option>");
+            });
         });
     });
 

@@ -9,6 +9,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Bean simple declaration for RestTemplate
+ * 
+ * @author Henry Hu
+ */
 @Configuration
 public class RestTemplateConfig {
 

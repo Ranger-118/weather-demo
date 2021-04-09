@@ -1,6 +1,11 @@
 package indi.henry.weatherdemo.util;
 
-public class AppUtil {
+/**
+ * Constants for the application
+ * 
+ * @author Henry Hu
+ */
+public class AppConstants {
     
     public static final String CENTIGRADE_SYMBOL = "℃";
 

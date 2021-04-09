@@ -15,12 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import indi.henry.weatherdemo.entity.CityEntity;
-import indi.henry.weatherdemo.entity.WeatherResponse;
+import indi.henry.weatherdemo.model.WeatherResponse;
 import indi.henry.weatherdemo.model.WeatherResult;
 import indi.henry.weatherdemo.repository.WeatherRepository;
 import indi.henry.weatherdemo.service.WeatherService;
-import indi.henry.weatherdemo.util.AppUtil;
+import indi.henry.weatherdemo.util.AppConstants;
 
+/**
+ * The implementation for the weather services
+ * 
+ * @author Henry Hu
+ */
 @Service
 @Transactional
 public class WeatherServiceImpl implements WeatherService {
@@ -47,31 +52,43 @@ public class WeatherServiceImpl implements WeatherService {
         return result;
     }
 
+    /**
+     * The method would call the weather public API for current weather information for target city by using Rest Template,
+     * and abstract the requested fields to construct the weather response structure for output
+     * 
+     * @author Henry Hu
+     */
     @Override
     public WeatherResponse getWeatherInfo(String city) throws RuntimeException {
 
         Map<String, String> params = new HashMap<>();
-        params.put(AppUtil.CITY_PARAM, city);
-        params.put(AppUtil.API_KEY_PARAM, apiKey);
+        params.put(AppConstants.CITY_PARAM, city);
+        params.put(AppConstants.API_KEY_PARAM, apiKey);
 
         WeatherResult weatherResult = restTemplate.getForObject(weatherUrl, WeatherResult.class, params);
+
         String temperature = weatherResult.getMain().getTemp().min(BigDecimal.valueOf(32))
-                .divide(BigDecimal.valueOf(1.8), 0).toString().concat(AppUtil.CENTIGRADE_SYMBOL);
-        String updatedTime = new SimpleDateFormat(AppUtil.DATE_FORMAT)
+                .divide(BigDecimal.valueOf(1.8), 0).toString().concat(AppConstants.CENTIGRADE_SYMBOL);
+        String updatedTime = new SimpleDateFormat(AppConstants.DATE_FORMAT)
                 .format(Date.from(Instant.ofEpochSecond(weatherResult.getDt())));
         String weather = weatherResult.getWeather().get(0).getDescription();
-        String wind = weatherResult.getWind().getSpeed().toString().concat(AppUtil.SPEED_UNIT);
+        String wind = weatherResult.getWind().getSpeed().toString().concat(AppConstants.SPEED_UNIT);
 
-        WeatherResponse result = new WeatherResponse();
-        result.setCity(city);
-        result.setTemperature(temperature);
-        result.setUpdatedTime(updatedTime);
-        result.setWeather(weather);
-        result.setWind(wind);
-
-        return result;
+        return WeatherResponse.builder()
+                    .city(city)
+                    .temperature(temperature)
+                    .updatedTime(updatedTime)
+                    .weather(weather)
+                    .wind(wind)
+                    .build();
     }
 
+    /**
+     * The method would call the weather public API for city verification,
+     * if no issue it would add the city to the database
+     * 
+     * @author Henry Hu
+     */
     @Override
     public WeatherResponse addWeatherCity(String city) throws RuntimeException {
         WeatherResponse result = this.getWeatherInfo(city);

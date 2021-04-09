@@ -19,6 +19,11 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * Database config for H2
+ * 
+ * @author Henry Hu
+ */
 @Configuration
 @ConfigurationProperties(prefix = "app")
 @EnableTransactionManagement
@@ -32,8 +37,6 @@ public class H2DatabaseConfig {
     private List<String> scriptsToExecute;
 
     private boolean showSql;
-
-    private String databasePlatform;
 
     @Bean
     public DataSource dataSource() {
@@ -55,7 +58,6 @@ public class H2DatabaseConfig {
         adapter.setDatabase(Database.H2);
         adapter.setShowSql(showSql);
         adapter.setGenerateDdl(true);
-        adapter.setDatabasePlatform(databasePlatform);
 
         return adapter;
     }
@@ -97,13 +99,5 @@ public class H2DatabaseConfig {
 
     public void setShowSql(boolean showSql) {
         this.showSql = showSql;
-    }
-
-    public String getDatabasePlatform() {
-        return databasePlatform;
-    }
-
-    public void setDatabasePlatform(String databasePlatform) {
-        this.databasePlatform = databasePlatform;
     }
 }

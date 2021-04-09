@@ -3,8 +3,13 @@ package indi.henry.weatherdemo.service;
 import java.util.List;
 
 import indi.henry.weatherdemo.entity.CityEntity;
-import indi.henry.weatherdemo.entity.WeatherResponse;
+import indi.henry.weatherdemo.model.WeatherResponse;
 
+/**
+ * Service interface specified for weather API
+ * 
+ * @author Henry Hu
+ */
 public interface WeatherService {
 
     public List<CityEntity> getWeatherAllInfo();

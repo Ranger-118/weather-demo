@@ -14,13 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import indi.henry.weatherdemo.entity.CityEntity;
-import indi.henry.weatherdemo.entity.WeatherResponse;
+import indi.henry.weatherdemo.model.WeatherResponse;
 import indi.henry.weatherdemo.service.WeatherService;
 
+/**
+ * Rest Controller for the weather API
+ * 
+ * @author Henry Hu
+ */
 @RestController
 @RequestMapping("/weather")
 public class WeatherController {
-
     
     private WeatherService weatherService;
 
